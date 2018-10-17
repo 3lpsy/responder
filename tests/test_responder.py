@@ -145,7 +145,7 @@ def test_request_and_get(api, session):
             resp.headers.update({"LIFE": "42"})
 
     r = session.get(api.url_for(ThingsResource))
-    assert "DEATH" in r.headers
+    assert "DEATH" not in r.headers
     assert "LIFE" in r.headers
 
 
