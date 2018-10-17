@@ -203,7 +203,7 @@ class API:
 
                 method = req.method
 
-                if getattr(view, f"on_{method}"):
+                if getattr(view, f"on_{method}", False):
                     try:
                         r = getattr(view, f"on_{method}")(req, resp)
                         if hasattr(r, "send"):
@@ -212,7 +212,7 @@ class API:
                         pass
 
                 # Run on_request second if on_{method} does not exist.
-                elif getattr(view, "on_request")(req, resp):
+                elif getattr(view, "on_request", False):
                     try:
                         r = getattr(view, "on_request")(req, resp)
                         if hasattr(r, "send"):
@@ -220,8 +220,6 @@ class API:
                     except AttributeError:
                         pass
                         
-                else:
-                    self.default_response(req, resp)
         else:
             self.default_response(req, resp)
 
