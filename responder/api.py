@@ -199,23 +199,29 @@ class API:
                         #     pass
                         pass
 
-                # Run on_request first.
-                try:
-                    r = getattr(view, "on_request")(req, resp)
-                    if hasattr(r, "send"):
-                        await r
-                except AttributeError:
-                    pass
+                # Run on_{method} first.
 
-                # Then on_get.
                 method = req.method
 
-                try:
-                    r = getattr(view, f"on_{method}")(req, resp)
-                    if hasattr(r, "send"):
-                        await r
-                except AttributeError:
-                    pass
+                if getattr(view, f"on_{method}"):
+                    try:
+                        r = getattr(view, f"on_{method}")(req, resp)
+                        if hasattr(r, "send"):
+                            await r
+                    except AttributeError:
+                        pass
+
+                # Run on_request second if on_{method} does not exist.
+                elif getattr(view, "on_request")(req, resp):
+                    try:
+                        r = getattr(view, "on_request")(req, resp)
+                        if hasattr(r, "send"):
+                            await r
+                    except AttributeError:
+                        pass
+                        
+                else:
+                    self.default_response(req, resp)
         else:
             self.default_response(req, resp)
 

@@ -12,5 +12,11 @@ tests/__pycache__
 build
 responder.egg-info/
 dist/
+
+# exclude test/devolopment applications
 app.py
 app2.py
+
+# exclude virtual environments
+venv
+.venv
